@@ -1,63 +1,71 @@
-import Head from 'next/head'
+import Head from "next/head";
+import { useState } from "react";
+import getMakeup from "../services/MakeUpApi";
 
 export default function Home() {
+  const [makes, setMakes] = useState([]);
+  const [aviso, setAviso] = useState("");
+
+  async function search() {
+    setAviso("");
+    const makeups = await getMakeup(
+      document.getElementById("searchInput").value
+    );
+    console.log(makeups.length == 0);
+    if (makeups.length <= 0) setAviso("Nenhuma make foi encontrada :(");
+    setMakes(makeups);
+    return makeups;
+  }
+
   return (
     <div className="container">
       <Head>
-        <title>Create Next App</title>
+        <title>Minhas Makes</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main>
-        <h1 className="title">
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
+        <h1 className="title">Encontre aqui suas makes</h1>
 
         <p className="description">
-          Get started by editing <code>pages/index.js</code>
+          Este site utiliza a API pública da{" "}
+          <a href="https://makeup-api.herokuapp.com/">MakeUp</a>
         </p>
 
+        <div>
+          <input
+            className="searchInput"
+            id="searchInput"
+            placeholder="Digite o tipo do produto..."
+          />
+          <input
+            className="searchButton"
+            type="button"
+            value="Pesquisar"
+            onClick={() => search()}
+          />
+        </div>
+
+        <p>{aviso}</p>
         <div className="grid">
-          <a href="https://nextjs.org/docs" className="card">
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className="card">
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/zeit/next.js/tree/master/examples"
-            className="card"
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className="card"
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
+          {makes &&
+            Array.isArray(makes) &&
+            makes.map((make) => {
+              return (
+                <a key={make.id} href={make.product_link}>
+                  <div className="card">
+                    <p>{make.category}</p>
+                    <img src={make.image_link} />
+                    <h3>{make.name.substring(0, 20)}</h3>
+                    <span>R$ {make.price}</span>
+                  </div>
+                </a>
+              );
+            })}
         </div>
       </main>
 
-      <footer>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className="logo" />
-        </a>
-      </footer>
+      <footer>Powered by Sanderson Corrêa</footer>
 
       <style jsx>{`
         .container {
@@ -103,8 +111,30 @@ export default function Home() {
         }
 
         .title a {
-          color: #0070f3;
+          color: #db7093;
           text-decoration: none;
+        }
+
+        .searchInput {
+          border: 1px solid #db7093;
+          color: #db7093;
+          padding: 15px 32px;
+          text-align: center;
+          text-decoration: none;
+          display: inline-block;
+          font-size: 16px;
+        }
+
+        .searchButton {
+          border: 1px solid #db7093;
+          color: white;
+          padding: 15px 32px;
+          text-align: center;
+          text-decoration: none;
+          display: inline-block;
+          font-size: 16px;
+          background-color: #db7093;
+          cursor: pointer;
         }
 
         .title a:hover,
@@ -152,19 +182,21 @@ export default function Home() {
           margin: 1rem;
           flex-basis: 45%;
           padding: 1.5rem;
-          text-align: left;
           color: inherit;
           text-decoration: none;
           border: 1px solid #eaeaea;
           border-radius: 10px;
           transition: color 0.15s ease, border-color 0.15s ease;
+          align-items: center;
+          justify-content: center;
+          text-align: center;
         }
 
         .card:hover,
         .card:focus,
         .card:active {
-          color: #0070f3;
-          border-color: #0070f3;
+          color: #db7093;
+          border-color: #db7093;
         }
 
         .card h3 {
@@ -173,9 +205,27 @@ export default function Home() {
         }
 
         .card p {
+          color: #fff;
           margin: 0;
-          font-size: 1.25rem;
+          padding: 0.25rem 0.5rem;
+          border-radius: 2px;
+          font-size: 0.75rem;
           line-height: 1.5;
+          background-color: #db7093;
+          text-align: center;
+        }
+
+        .card span {
+          color: #778899;
+          margin: 0;
+          padding: 0.25rem 0.5rem;
+          font-size: 0.75rem;
+          line-height: 1.5;
+          background-color: #fff;
+        }
+
+        .card img {
+          margin: 1.5rem 0;
         }
 
         .logo {
@@ -205,5 +255,5 @@ export default function Home() {
         }
       `}</style>
     </div>
-  )
+  );
 }
