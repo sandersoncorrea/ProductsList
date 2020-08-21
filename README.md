@@ -1,5 +1,7 @@
 # Minhas Makes
 
+<p style="text-align: center">#react #nextjs #axios #heroku #css</p>
+
 Este é um site simples de uma única página que utiliza o NextJS, uma chamada à API pública MakeUp-API (https://makeup-api.herokuapp.com/) e o Axios para fazer a requisição.
 
 ## Instalação
